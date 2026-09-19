@@ -9,7 +9,7 @@ from cogc.core import compile_request
 from cogc.models import CompileRequest
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMAS = ROOT / ".github" / "skills" / "cogc" / "schemas"
+SCHEMAS = ROOT / "skill" / "cogc" / "schemas"
 
 
 def _load(path: Path):

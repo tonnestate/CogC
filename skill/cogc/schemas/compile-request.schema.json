@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cogc/compile-request.schema.json",
+  "title": "CogC Compile Request",
+  "type": "object",
+  "required": ["goal", "task", "sources"],
+  "properties": {
+    "goal": {"type": "string"},
+    "task": {"type": "string"},
+    "token_budget": {"type": "integer", "minimum": 1},
+    "policy": {"type": "string"},
+    "target": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "context_budget": {"type": "integer", "minimum": 1},
+        "instruction_depth": {"type": "string"},
+        "open_ended_reasoning": {"type": "string"},
+        "schema_adherence": {"type": "string"},
+        "ambiguity_tolerance": {"type": "string"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "properties": {
+          "id": {"type": "string"},
+          "text": {"type": "string"},
+          "kind": {"type": "string"},
+          "criticality": {
+            "oneOf": [
+              {"type": "string"},
+              {"type": "integer", "minimum": 0, "maximum": 5}
+            ]
+          },
+          "metadata": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "success_conditions": {"type": "array", "items": {"type": "string"}},
+    "stop_conditions": {"type": "array", "items": {"type": "string"}},
+    "procedures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "steps"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "steps": {"type": "array", "items": {"type": "string"}},
+          "triggers": {"type": "array", "items": {"type": "string"}},
+          "source_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cogc/compression-receipt.schema.json",
+  "title": "CogC Compression Receipt",
+  "type": "object",
+  "required": [
+    "version", "policy", "target_profile", "source_units", "cir_units", "kept_units",
+    "source_token_estimate", "compiled_token_estimate", "compression_ratio",
+    "source_state_hash", "dictionary_refs", "over_budget_due_to_critical"
+  ],
+  "properties": {
+    "version": {"type": "string"},
+    "policy": {"type": "string"},
+    "target_profile": {"type": "string"},
+    "source_units": {"type": "integer", "minimum": 0},
+    "cir_units": {"type": "integer", "minimum": 0},
+    "kept_units": {"type": "integer", "minimum": 0},
+    "source_token_estimate": {"type": "integer", "minimum": 0},
+    "compiled_token_estimate": {"type": "integer", "minimum": 0},
+    "compression_ratio": {"type": "number", "minimum": 0},
+    "source_state_hash": {"type": "string"},
+    "dictionary_refs": {"type": "array", "items": {"type": "string"}},
+    "over_budget_due_to_critical": {"type": "boolean"}
+  }
+}

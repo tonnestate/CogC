@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / ".github" / "skills" / "cogc"
+SOURCE = ROOT / "skill" / "cogc"
 
 TARGETS = {
     "github": ROOT / ".github" / "skills",
@@ -17,12 +17,12 @@ TARGETS = {
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Copy the canonical CogC skill into a project skill directory without maintaining duplicate sources."
+        description="Install the self-contained CogC Agent Skill into a project skill directory."
     )
     parser.add_argument(
         "--target",
         choices=sorted(TARGETS),
-        help="Project target directory shorthand. Omit when --destination is supplied.",
+        help="Project target shorthand. Omit when --destination is supplied.",
     )
     parser.add_argument(
         "--destination",
@@ -34,12 +34,14 @@ def main() -> int:
 
     if bool(args.target) == bool(args.destination):
         parser.error("Provide exactly one of --target or --destination")
+    if not (SOURCE / "SKILL.md").exists() or not (SOURCE / "scripts" / "cogc" / "__init__.py").exists():
+        raise SystemExit("Canonical CogC skill is incomplete. Run: python tools/sync_skill.py")
 
     parent = args.destination.resolve() if args.destination else TARGETS[args.target].resolve()
     dest = parent / "cogc"
 
     if dest.resolve() == SOURCE.resolve():
-        print(f"CogC is already canonical at {dest}")
+        print(f"CogC canonical skill is already at {dest}")
         return 0
 
     if dest.exists():
@@ -49,7 +51,7 @@ def main() -> int:
 
     parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(SOURCE, dest, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    print(f"Installed CogC skill to {dest}")
+    print(f"Installed self-contained CogC skill to {dest}")
     return 0
 
 

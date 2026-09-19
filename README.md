@@ -1,7 +1,7 @@
 # CogC
 
 > [!WARNING]
-> **EXPERIMENTAL — v0.1.0**  
+> **EXPERIMENTAL — v0.2.0**  
 > CogC is a research-oriented Agent Skill and reference implementation. The deterministic compiler, provenance tracking, reversible source handles, schemas, and fidelity checks are tested, but **downstream intelligence gains are not yet claimed**. Use it behind evaluation gates until your own raw-vs-summary-vs-CogC tests show a measurable benefit.
 
 **Capacity-Aware Cognitive Compression for constrained AI agents.**
@@ -14,8 +14,9 @@ A smaller model often does not need *more* context. It needs the **right context
 
 CogC is both:
 
-1. a portable Agent Skill under `.github/skills/cogc`; and
-2. a dependency-free Python reference engine for deterministic cognitive compilation.
+1. a **visible canonical Agent Skill** under `skill/cogc`;
+2. a GitHub-discovered mirror under `.github/skills/cogc`; and
+3. a dependency-free Python reference engine under `src/cogc`.
 
 ## Why CogC exists
 
@@ -78,7 +79,7 @@ Task + evidence + constraints + memory + procedures + target profile
                        target worker
 ```
 
-The v0.1.0 compiler provides:
+The v0.2.0 compiler provides:
 
 - **Capacity-aware output:** compile for the intended worker rather than producing one universal summary.
 - **C0–C5 criticality classes:** protect hard constraints and high-value information from aggressive reduction.
@@ -125,7 +126,7 @@ When constraints, IDs, numerical values, evidence references, and stop condition
 
 ## What CogC does **not** claim
 
-CogC v0.1.0 does **not** claim that:
+CogC v0.2.0 does **not** claim that:
 
 - compression always improves model quality;
 - fewer tokens automatically mean better reasoning;
@@ -215,13 +216,19 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The canonical skill lives at:
+The canonical, visible skill source lives at:
+
+```text
+skill/cogc/SKILL.md
+```
+
+GitHub discovers the verified mirror at:
 
 ```text
 .github/skills/cogc/SKILL.md
 ```
 
-The same skill can be copied into other project-level Agent Skills locations with `tools/install_skill.py`. See `docs/installation.md`.
+The Python package is independent under `src/cogc`. `tools/sync_skill.py --check` verifies that the portable skill and GitHub mirror contain the same generated engine and content. The skill can be copied into other project-level Agent Skills locations with `tools/install_skill.py`. See `docs/installation.md`.
 
 ## First compile
 
@@ -236,7 +243,7 @@ cogc compile \
 Or without package installation:
 
 ```bash
-python .github/skills/cogc/scripts/compile_context.py \
+python skill/cogc/scripts/compile_context.py \
   --input examples/repository-analysis.json \
   --profile qwen-4b \
   --format text \
@@ -251,7 +258,7 @@ cogc validate --input examples/repository-analysis.json --profile qwen-4b
 
 ## Core invariants
 
-CogC v0.1.0 enforces these design rules:
+CogC v0.2.0 enforces these design rules:
 
 - C0/C1 information is never dropped merely to satisfy a token budget.
 - Exact critical numbers and machine-like identifiers must survive.
@@ -285,24 +292,31 @@ CogC v0.1.0 enforces these design rules:
 }
 ```
 
-See `examples/` and `.github/skills/cogc/schemas/compile-request.schema.json` for the full contract.
+See `examples/` and `skill/cogc/schemas/compile-request.schema.json` for the full contract.
 
 ## Repository layout
 
 ```text
 .
+├── src/cogc/                  # installable Python engine (canonical engine source)
+├── skill/cogc/                # visible canonical Agent Skill
+│   ├── SKILL.md
+│   ├── references/
+│   ├── schemas/
+│   └── scripts/
+│       └── cogc/              # generated portable engine copy
 ├── .github/
-│   ├── skills/cogc/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   ├── schemas/
-│   │   └── scripts/
-│   │       └── cogc/          # portable reference engine
-│   └── workflows/ci.yml
+│   ├── skills/cogc/           # generated/verified GitHub Agent Skill mirror
+│   └── workflows/
+│       ├── ci.yml
+│       └── release.yml
 ├── docs/
 ├── evals/
 ├── examples/
 ├── tests/
+├── tools/
+│   ├── install_skill.py
+│   └── sync_skill.py
 ├── pyproject.toml
 └── README.md
 ```
@@ -317,7 +331,7 @@ CogC is intentionally reuse-first. Its design is informed by:
 - Agent Memory Distillation for hierarchical workflow/subtask/function transfer to small agents;
 - Letta and Mem0 as references for persistent memory/context-management boundaries.
 
-See `.github/skills/cogc/references/research-foundations.md` for links and the precise boundary.
+See `skill/cogc/references/research-foundations.md` for links and the precise boundary.
 
 The repository does **not** claim these papers prove CogC as a combined architecture. CogC must beat its baselines empirically.
 
@@ -345,7 +359,7 @@ The offline eval validates fidelity and compression mechanics only. It does not 
 
 ## Current status
 
-**v0.1.0 — EXPERIMENTAL**
+**v0.2.0 — EXPERIMENTAL**
 
 The deterministic mechanics are implemented and tested. Promotion requires downstream evidence that CogC provides one of the following without reducing required quality:
 
@@ -360,7 +374,7 @@ Until such evidence exists for a given environment, CogC should be treated as an
 
 ## Roadmap
 
-### v0.1.x — deterministic compiler
+### v0.1.0 — deterministic compiler
 
 - CIR
 - criticality protection
@@ -372,6 +386,15 @@ Until such evidence exists for a given environment, CogC should be treated as an
 - procedure injection
 - Fidelity Gate
 - A/B/C evaluation harness
+
+### v0.2.0 — packaging and integrity
+
+- standard `src/cogc` package layout;
+- visible canonical `skill/cogc` bundle;
+- verified `.github/skills/cogc` mirror;
+- self-contained portable skill;
+- mirror/engine drift detection in CI;
+- standalone and installer tests.
 
 ### v0.2.x — optional compression backends
 

@@ -1,27 +1,30 @@
 # Roadmap
 
-## v0.1.0
+## v0.1.0 — deterministic prototype
 
 Build an inspectable deterministic reference implementation and prove the evaluation contract.
 
-## v0.1.x
+## v0.2.0 — packaging and integrity
 
-- JSON-schema validation in CLI when `jsonschema` is installed;
+- standard `src/cogc` Python packaging;
+- visible canonical `skill/cogc` source;
+- GitHub-discovered `.github/skills/cogc` mirror;
+- self-contained portable skill bundle;
+- mirror/engine integrity checks;
+- installer tests and standalone execution tests;
+- tagged-release automation.
+
+## v0.2.x — hardening
+
 - richer structured-data preservation;
 - deterministic large-log compaction;
 - explicit `expand` command backed by an external source store;
-- better model-profile calibration harness.
-
-## v0.2.x
-
+- stronger model-profile calibration harness;
 - optional LLMLingua/LLMLingua-2 backend adapter;
 - plugin API for compressors;
-- decision-equivalence evaluator;
-- portable `.agents/skills` / `.claude/skills` installer.
+- decision-equivalence evaluator.
 
-## v0.3.x
-
-Only after enough real labels exist:
+## v0.3.x — learning, only after real labels exist
 
 - compression-failure dataset;
 - ACON-style guideline/policy optimization;

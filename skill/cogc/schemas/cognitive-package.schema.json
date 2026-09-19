@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cogc/cognitive-package.schema.json",
+  "title": "CogC Cognitive Package",
+  "type": "object",
+  "required": [
+    "goal", "task", "target_profile", "immutable", "facts", "success_conditions",
+    "stop_conditions", "expandable", "source_map", "receipt", "fidelity"
+  ],
+  "properties": {
+    "goal": {"type": "string"},
+    "task": {"type": "string"},
+    "target_profile": {"type": "string"},
+    "immutable": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
+    "facts": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
+    "procedure": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "object"}
+      ]
+    },
+    "success_conditions": {"type": "array", "items": {"type": "string"}},
+    "stop_conditions": {"type": "array", "items": {"type": "string"}},
+    "expandable": {"type": "object", "additionalProperties": {"type": "string"}},
+    "source_map": {
+      "type": "object",
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    },
+    "receipt": {"type": "object"},
+    "fidelity": {"type": "object"}
+  },
+  "$defs": {
+    "unit": {
+      "type": "object",
+      "required": ["id", "text", "kind", "criticality", "source_refs", "metadata", "score"],
+      "properties": {
+        "id": {"type": "string"},
+        "text": {"type": "string"},
+        "kind": {"type": "string"},
+        "criticality": {"type": "string"},
+        "source_refs": {"type": "array", "items": {"type": "string"}},
+        "metadata": {"type": "object"},
+        "score": {"type": "number"}
+      }
+    }
+  }
+}

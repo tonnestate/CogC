@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / ".github" / "skills" / "cogc" / "SKILL.md"
+SKILL = ROOT / "skill" / "cogc" / "SKILL.md"
 
 
 def test_skill_has_required_frontmatter() -> None:
