@@ -1,7 +1,7 @@
 # CogC
 
 > [!WARNING]
-> **EXPERIMENTAL — v0.2.0**  
+> **EXPERIMENTAL — v0.2.1**  
 > CogC is a research-oriented Agent Skill and reference implementation. The deterministic compiler, provenance tracking, reversible source handles, schemas, and fidelity checks are tested, but **downstream intelligence gains are not yet claimed**. Use it behind evaluation gates until your own raw-vs-summary-vs-CogC tests show a measurable benefit.
 
 **Capacity-Aware Cognitive Compression for constrained AI agents.**
@@ -79,7 +79,7 @@ Task + evidence + constraints + memory + procedures + target profile
                        target worker
 ```
 
-The v0.2.0 compiler provides:
+The v0.2.1 compiler provides:
 
 - **Capacity-aware output:** compile for the intended worker rather than producing one universal summary.
 - **C0–C5 criticality classes:** protect hard constraints and high-value information from aggressive reduction.
@@ -126,7 +126,7 @@ When constraints, IDs, numerical values, evidence references, and stop condition
 
 ## What CogC does **not** claim
 
-CogC v0.2.0 does **not** claim that:
+CogC v0.2.1 does **not** claim that:
 
 - compression always improves model quality;
 - fewer tokens automatically mean better reasoning;
@@ -258,7 +258,7 @@ cogc validate --input examples/repository-analysis.json --profile qwen-4b
 
 ## Core invariants
 
-CogC v0.2.0 enforces these design rules:
+CogC v0.2.1 enforces these design rules:
 
 - C0/C1 information is never dropped merely to satisfy a token budget.
 - Exact critical numbers and machine-like identifiers must survive.
@@ -359,7 +359,7 @@ The offline eval validates fidelity and compression mechanics only. It does not 
 
 ## Current status
 
-**v0.2.0 — EXPERIMENTAL**
+**v0.2.1 — EXPERIMENTAL**
 
 The deterministic mechanics are implemented and tested. Promotion requires downstream evidence that CogC provides one of the following without reducing required quality:
 
@@ -395,6 +395,14 @@ Until such evidence exists for a given environment, CogC should be treated as an
 - self-contained portable skill;
 - mirror/engine drift detection in CI;
 - standalone and installer tests.
+
+### v0.2.1 — skill progressive disclosure
+
+- compact execution-oriented `SKILL.md`;
+- trigger-focused frontmatter description;
+- detailed architecture and research moved behind `references/`;
+- public skill instructions made project-neutral;
+- regression tests for skill size, local references, and metadata behavior.
 
 ### v0.2.x — optional compression backends
 
