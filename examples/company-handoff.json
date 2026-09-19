@@ -1,0 +1,14 @@
+{
+  "goal": "Hand off a customer-operation task to a constrained local worker.",
+  "task": "Prepare the next safe action using only verified customer state.",
+  "token_budget": 700,
+  "target": {"name": "qwen-4b", "context_budget": 700},
+  "success_conditions": ["Return one next action and its evidence references."],
+  "stop_conditions": ["Do not contact the customer if consent state is unknown."],
+  "sources": [
+    {"id": "AUTH-7", "kind": "authorization", "criticality": "C0", "text": "Do not contact the customer if consent state is unknown. Owner approval is required for any payment."},
+    {"id": "CRM-22", "kind": "current_state", "criticality": "C1", "text": "Case CASE-2041 is OPEN. Consent flag is UNKNOWN. Last verified update: 2026-09-18."},
+    {"id": "EV-90", "kind": "evidence", "criticality": "C1", "text": "EV-90 confirms that no verified consent receipt is currently attached to CASE-2041."},
+    {"id": "HISTORY-1", "kind": "history", "text": "Long customer conversation history omitted here for brevity. The worker only needs the verified current state for the next safe action."}
+  ]
+}

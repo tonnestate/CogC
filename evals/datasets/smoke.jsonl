@@ -1,0 +1,3 @@
+{"id":"repo-1","request":"examples/repository-analysis.json","profile":"qwen-4b","expect_fidelity":true,"max_ratio":0.90}
+{"id":"handoff-1","request":"examples/company-handoff.json","profile":"qwen-4b","expect_fidelity":true,"max_ratio":1.0}
+{"id":"tool-heavy-1","request":"examples/tool-output-heavy.json","profile":"qwen-4b","expect_fidelity":true,"max_ratio":0.35}

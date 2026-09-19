@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cogc-skill"
+version = "0.1.0"
+description = "Capacity-Aware Cognitive Compression skill and deterministic compiler for constrained AI agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "CogC contributors"}]
+keywords = ["agent-skills", "context-compression", "small-language-models", "agents", "llm"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "jsonschema>=4.21"]
+
+[project.scripts]
+cogc = "cogc.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = ".github/skills/cogc/scripts"}
+packages = ["cogc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

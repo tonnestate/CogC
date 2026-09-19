@@ -1,0 +1,70 @@
+{
+  "goal": "Determine whether the candidate repository already provides the required reusable capability.",
+  "task": "Inspect the implementation and produce runtime evidence before recommending reuse or custom development.",
+  "target": {
+    "name": "qwen-4b",
+    "context_budget": 900,
+    "instruction_depth": "low",
+    "open_ended_reasoning": "low",
+    "schema_adherence": "high",
+    "ambiguity_tolerance": "low"
+  },
+  "token_budget": 900,
+  "success_conditions": [
+    "A source-level implementation path is identified.",
+    "A real runtime proof or an explicit evidence-backed reason why runtime proof is impossible is recorded."
+  ],
+  "stop_conditions": [
+    "Stop and escalate if source evidence contradicts the README claim.",
+    "Do not recommend custom implementation before reuse has been evaluated."
+  ],
+  "sources": [
+    {
+      "id": "OWN-001",
+      "kind": "owner_instruction",
+      "criticality": "C0",
+      "text": "Owner approval is required before any production write. Payment limit is 100 EUR."
+    },
+    {
+      "id": "EVID-001",
+      "kind": "evidence",
+      "criticality": "C1",
+      "text": "Repository README claims capability FEATURE-X, but this claim is not runtime proof. Evidence ticket EV-481 remains open."
+    },
+    {
+      "id": "STATE-001",
+      "kind": "current_state",
+      "text": "The repository is Python-based and the candidate module is src/feature_x.py. A local test environment is available."
+    },
+    {
+      "id": "BG-001",
+      "kind": "background",
+      "text": "The team has discussed repository evaluation many times. This paragraph contains general history and repeated context that is not required for the next decision. The earlier conversations also repeated that source inspection is useful and that runtime proof is useful."
+    },
+    {
+      "id": "BG-002",
+      "kind": "background",
+      "text": "The team has discussed repository evaluation many times. This paragraph contains general history and repeated context that is not required for the next decision. The earlier conversations also repeated that source inspection is useful and that runtime proof is useful."
+    },
+    {
+      "id": "NOISE-001",
+      "kind": "chitchat",
+      "text": "This is conversational filler and should not affect the repository decision."
+    }
+  ],
+  "procedures": [
+    {
+      "id": "WF-OSS-005",
+      "title": "OSS capability verification",
+      "triggers": ["repository", "reuse", "source", "runtime proof"],
+      "source_refs": ["MEM-WF-005"],
+      "steps": [
+        "Identify the claimed capability.",
+        "Inspect the actual implementation path, not only documentation.",
+        "Run the smallest safe executable proof.",
+        "Record evidence and contradictions.",
+        "Recommend reuse only if the verified capability satisfies the requirement."
+      ]
+    }
+  ]
+}
