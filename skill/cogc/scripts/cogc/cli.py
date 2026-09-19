@@ -62,7 +62,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cogc", description="Capacity-Aware Cognitive Compression")
-    parser.add_argument("--version", action="version", version="CogC 0.2.0")
+    parser.add_argument("--version", action="version", version="CogC 0.2.1")
     sub = parser.add_subparsers(dest="command", required=True)
 
     compile_p = sub.add_parser("compile", help="Compile raw context into a Cognitive Package")

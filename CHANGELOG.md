@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 — 2026-09-19
+
+- Refactored `SKILL.md` for progressive disclosure and agent execution rather than product/specification prose.
+- Reduced the active skill payload and moved detail behind existing `references/` resources.
+- Removed project-specific component names from the public skill instructions.
+- Made the description more explicit about triggering on constrained-worker context preparation.
+- Added skill-spec regression checks for payload size, public neutrality, and referenced-resource integrity.
+
 ## 0.2.0 — 2026-09-19
 
 Packaging and repository-integrity release.

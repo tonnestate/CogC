@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cogc-skill"
-version = "0.2.0"
+version = "0.2.1"
 description = "Experimental capacity-aware cognitive compression for AI agents with provenance and fidelity checks"
 readme = "README.md"
 requires-python = ">=3.10"

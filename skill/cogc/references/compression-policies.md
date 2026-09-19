@@ -1,6 +1,6 @@
 # Compression Policies
 
-CogC v0.2.0 ships one production-ready policy: `deterministic`.
+CogC v0.2.1 ships one production-ready policy: `deterministic`.
 
 It performs:
 

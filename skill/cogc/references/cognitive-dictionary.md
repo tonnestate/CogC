@@ -1,6 +1,6 @@
 # Cognitive Dictionary
 
-The dictionary provides stable labels for repeated cognitive/operational concepts. In v0.2.0 detection is advisory only: CogC records matching dictionary references in the receipt but does not replace protected source text with dictionary codes.
+The dictionary provides stable labels for repeated cognitive/operational concepts. In v0.2.1 detection is advisory only: CogC records matching dictionary references in the receipt but does not replace protected source text with dictionary codes.
 
 Initial entries:
 

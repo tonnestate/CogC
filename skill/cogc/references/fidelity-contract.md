@@ -2,7 +2,7 @@
 
 Compression is acceptable only if the package preserves what the worker requires to act correctly.
 
-The v0.2.0 Fidelity Gate is intentionally strict about protected material:
+The v0.2.1 Fidelity Gate is intentionally strict about protected material:
 
 1. every C0/C1 CIR unit must remain in the package;
 2. numbers present in protected material must remain exact;

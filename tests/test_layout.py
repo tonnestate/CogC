@@ -46,4 +46,4 @@ def test_versions_are_consistent() -> None:
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     match = re.search(r'^version = "([^"]+)"', pyproject, flags=re.MULTILINE)
     assert match
-    assert match.group(1) == cogc.__version__ == "0.2.0"
+    assert match.group(1) == cogc.__version__ == "0.2.1"

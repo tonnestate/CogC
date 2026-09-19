@@ -12,4 +12,4 @@ Each unit contains:
 - `metadata`: optional machine-readable context;
 - `score`: task-relevance score assigned during compilation.
 
-CogC v0.2.0 intentionally keeps CIR simple. It does not invent an ontology for the whole company. The representation exists to make compression inspectable and testable.
+CogC v0.2.1 intentionally keeps CIR simple. It does not invent an ontology for the whole company. The representation exists to make compression inspectable and testable.

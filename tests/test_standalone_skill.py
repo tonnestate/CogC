@@ -32,7 +32,7 @@ def _run(script: Path) -> dict:
 def test_visible_skill_runs_without_root_package_path() -> None:
     payload = _run(ROOT / "skill" / "cogc" / "scripts" / "compile_context.py")
     assert payload["fidelity"]["passed"] is True
-    assert payload["receipt"]["version"] == "0.2.0"
+    assert payload["receipt"]["version"] == "0.2.1"
 
 
 def test_github_skill_mirror_runs() -> None:

@@ -4,6 +4,13 @@
 
 Build an inspectable deterministic reference implementation and prove the evaluation contract.
 
+## v0.2.1 — skill progressive disclosure
+
+- compact operational `SKILL.md`;
+- trigger-oriented metadata;
+- public/project-neutral instructions;
+- detailed material loaded from references only when needed.
+
 ## v0.2.0 — packaging and integrity
 
 - standard `src/cogc` Python packaging;

@@ -1,6 +1,6 @@
 # Installation
 
-CogC v0.2.0 deliberately separates the Python package from Agent Skill packaging.
+CogC v0.2.1 deliberately separates the Python package from Agent Skill packaging.
 
 ## Python package
 

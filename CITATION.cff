@@ -2,6 +2,6 @@ cff-version: 1.2.0
 title: "CogC: Capacity-Aware Cognitive Compression"
 message: "If you use CogC in research, please cite the repository release and the original prior-art papers relevant to the mechanisms you enable."
 type: software
-version: 0.2.0
+version: 0.2.1
 date-released: 2026-09-19
 license: Apache-2.0

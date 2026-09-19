@@ -16,7 +16,7 @@ from .models import (
 from .render import render_package
 from .utils import canonicalize, content_hash, estimate_tokens, keyword_set, sentence_split
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 
 def _build_cir(request: CompileRequest) -> list[CIRUnit]:

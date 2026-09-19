@@ -32,7 +32,7 @@ Raw context sources differ substantially: tool logs, database rows, conversation
 
 ## Why the first release is deterministic
 
-The main product risk is not lack of sophisticated compression. It is building a complex learned subsystem whose downstream value is unknown. v0.2.0 preserves that deterministic baseline while hardening packaging and release integrity before later ML is considered.
+The main product risk is not lack of sophisticated compression. It is building a complex learned subsystem whose downstream value is unknown. v0.2.1 preserves that deterministic baseline while reducing the active Agent Skill payload through progressive disclosure before later ML is considered.
 
 ## Budget behavior
 
