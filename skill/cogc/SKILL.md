@@ -1,203 +1,60 @@
 ---
 name: cogc
-description: Experimental capacity-aware cognitive compression for AI agents. Use CogC when a constrained worker must act on large, heterogeneous, repetitive, tool-heavy, RAG-heavy, memory-heavy, or handoff context and needs a smaller task-specific working state without losing hard constraints, exact values, identifiers, evidence, provenance, procedures, stop conditions, or source recoverability. CogC is especially useful for small/local models, agent handoffs, tool-output reduction, and verified procedural reuse. Do not use it as a substitute for retrieval, routing, governance, task decomposition, or persistent memory.
+description: Compile large or noisy agent context into the minimum faithful working state needed by a specific target model. Use CogC whenever an AI agent—especially a small or local model—must work with oversized tool output, RAG results, memory, logs, repository context, agent handoffs, or prior trajectories. Preserve hard constraints, exact values, identifiers, evidence provenance, procedures, contradictions, success criteria, stop conditions, and reversible source handles while removing irrelevant or redundant context. Use CogC before handing oversized context to a constrained worker; do not use it when the existing context is already small, precise, and task-appropriate.
 license: Apache-2.0
 ---
 
 # CogC — Capacity-Aware Cognitive Compression
 
-CogC compiles raw agent context into the minimum sufficient, provenance-preserving cognitive representation for a specific target worker.
+Compile context for the worker that will actually consume it.
 
-The objective is not “make the prompt shorter.” The objective is:
+The objective is not maximum compression. Produce the smallest faithful working state that still lets the target worker make the correct next decision.
 
-> Give this particular worker the smallest faithful state from which it can make the correct next decision.
+## Workflow
 
-## Use CogC when
+1. Identify the task and target worker.
+2. Gather the relevant source state before compressing it.
+3. Mark protected information and unresolved contradictions.
+4. Build or normalize the Cognitive Intermediate Representation (CIR).
+5. Apply lossless reduction before any lossy reduction.
+6. Replace verified historical trajectories with procedures when that preserves the required knowledge.
+7. Compile the remaining state for the target worker's capacity.
+8. Keep omitted evidence recoverable through stable source handles.
+9. Run the Fidelity Gate.
+10. If fidelity fails, reduce compression or return the raw context.
 
-Use CogC when at least one of these conditions applies:
+## Protect first
 
-- the target worker is a constrained model such as a 4B–9B local model;
-- raw context is larger or noisier than the worker can reliably use;
-- tool output, logs, search results, RAG chunks, memory, or repository scans dominate context;
-- a handoff between agents would otherwise copy long conversational history;
-- a verified prior trajectory can be represented as a reusable procedure instead of replayed verbatim;
-- evidence and source provenance must survive compression;
-- the system needs a measurable raw-vs-summary-vs-CogC comparison.
+Never silently remove or alter:
 
-Do not trigger CogC merely because text is long. If the full context is already small, precise, and appropriate for the worker, preserve it.
+- explicit constraints and authorization boundaries;
+- exact identifiers, dates, amounts, units, versions, and other critical values;
+- evidence references and provenance;
+- success criteria and acceptance conditions;
+- stop, escalation, or rollback conditions;
+- unresolved contradictions that could change the next action.
 
-## Hard boundaries
+Use explicit caller-supplied criticality when available. Otherwise apply the conservative rules in `references/criticality-model.md`.
 
-CogC MUST NOT:
+## Compression order
 
-- authorize actions;
-- override Owner, security, legal, payment, execution-boundary, PAUSE, KILL, or FREEZE controls;
-- select the business goal;
-- replace IntakeGov, SPARI, RAG, Graph, persistent memory, OmniRoute, a meta-router, or the Governor;
-- silently remove exact identifiers, numbers, evidence links, stop conditions, or hard constraints;
-- pretend estimated tokens are provider billing tokens;
-- treat textual similarity as proof that downstream decisions remain equivalent;
-- require private chain-of-thought from any model.
+Prefer transformations in this order:
 
-## Required workflow
+1. canonicalize formatting;
+2. remove exact duplicates;
+3. replace repeated material with references;
+4. remove clearly irrelevant/noisy material;
+5. select task-relevant evidence;
+6. shorten non-critical material extractively;
+7. use semantic or learned compression only when separately validated.
 
-### 1. Identify the target worker
+Stop compressing once the working state fits the target worker and task. Do not optimize token count at the expense of downstream correctness.
 
-Before compression, determine or state the target capacity profile. Prefer measured profiles over parameter-count assumptions.
+## Compile for the receiver
 
-Built-in profiles in v0.2.0:
+Do not create one universal summary. Adapt the package to the target worker.
 
-- `qwen-4b`
-- `qwen-9b`
-- `frontier-specialist`
-- `generic-small-agent`
-
-If the actual model does not match a built-in profile, use the closest conservative profile and record the mismatch.
-
-### 2. Assemble source state before compressing
-
-Retrieve first, compress second.
-
-CogC may consume:
-
-- task and goal;
-- hard constraints;
-- evidence;
-- current state;
-- RAG/Graph results;
-- memory;
-- tool observations;
-- verified procedures;
-- prior failure patterns;
-- success and stop conditions.
-
-Do not use CogC to compensate for missing retrieval.
-
-### 3. Classify criticality
-
-Use the CIR criticality classes described in `references/criticality-model.md`.
-
-C0 and C1 content is protected. Explicit source criticality always wins over heuristic classification.
-
-### 4. Apply lossless transformations first
-
-Use this order:
-
-1. canonicalization;
-2. exact deduplication;
-3. structural/reference deduplication;
-4. source-handle substitution;
-5. irrelevant/noise removal;
-6. extractive reduction;
-7. learned or semantic compression only when separately validated.
-
-Stop compressing as soon as the budget is satisfied.
-
-### 5. Prefer procedures over replaying trajectories
-
-If verified procedural memory exists, provide the smallest relevant level:
-
-- workflow;
-- subtask;
-- function.
-
-Do not paste entire historical agent conversations when a verified procedure conveys the actionable knowledge.
-
-### 6. Preserve provenance and reversibility
-
-Fold important omitted material behind stable source handles. Do not destroy it.
-
-A worker must be able to request the original evidence or observation when uncertainty requires expansion.
-
-### 7. Run the Fidelity Gate
-
-Never use a CogC package for consequential work if its fidelity report fails.
-
-The v0.2.0 verifier checks at minimum:
-
-- retention of C0/C1 units;
-- exact critical numbers;
-- exact critical identifiers;
-- source mapping.
-
-If verification fails, use a less aggressive policy or the raw context.
-
-### 8. Measure downstream outcomes
-
-When evaluating CogC, compare:
-
-- A: raw/full context;
-- B: ordinary summary/current context handling;
-- C: CogC.
-
-Measure verified task success, not compression ratio alone.
-
-## CLI usage
-
-From the repository root after `pip install -e .`:
-
-```bash
-cogc compile --input examples/repository-analysis.json --profile qwen-4b --format text --receipt
-```
-
-Without installation, from the skill directory:
-
-```bash
-python scripts/compile_context.py --input ../../../examples/repository-analysis.json --profile qwen-4b --format text --receipt
-```
-
-Validate the same request:
-
-```bash
-cogc validate --input examples/repository-analysis.json --profile qwen-4b
-```
-
-List built-in profiles:
-
-```bash
-cogc profiles
-```
-
-## Input contract
-
-The compile request is JSON. See `schemas/compile-request.schema.json` and the examples.
-
-At minimum provide:
-
-```json
-{
-  "goal": "...",
-  "task": "...",
-  "sources": [
-    {"id": "SRC-1", "kind": "constraint", "text": "..."}
-  ]
-}
-```
-
-For important constraints, set `criticality` explicitly rather than relying on heuristics.
-
-## Output contract
-
-CogC returns a Cognitive Package containing:
-
-- goal;
-- task;
-- target profile;
-- immutable/critical units;
-- selected relevant state;
-- optional procedure;
-- success conditions;
-- stop conditions;
-- expandable source handles;
-- source map;
-- compression receipt;
-- fidelity report.
-
-See `schemas/cognitive-package.schema.json`.
-
-## Small-model compilation rule
-
-For a constrained worker, prefer this shape:
+For constrained workers, prefer an explicit shape such as:
 
 ```text
 GOAL
@@ -211,28 +68,95 @@ SUCCESS CONDITION
 STOP / ESCALATION CONDITION
 ```
 
-Do not ask a weak model to rediscover a known method from raw history.
+Use `references/capacity-profiles.md` when selecting or defining a target profile.
 
-## Failure behavior
+## Prefer procedures over history
 
-CogC is an optimization layer. If it fails, degrade gracefully:
+When verified procedural memory already captures the method, provide the smallest useful level instead of replaying raw history:
 
-```text
-validated compiled package
-→ less compressed package
-→ extractive package
-→ deduplicated raw context
-→ raw context
+- workflow — end-to-end method;
+- subtask — reusable intermediate method;
+- function — tool-specific execution or recovery knowledge.
+
+Read `references/procedural-memory.md` when compiling prior experience.
+
+## Preserve provenance and reversibility
+
+Treat omitted but important source material as folded, not destroyed. Retain stable source handles so the worker or orchestrator can recover the original evidence when needed.
+
+Read `references/cognitive-intermediate-representation.md` for the CIR contract and `references/fidelity-contract.md` for preservation requirements.
+
+## Run deterministic compilation
+
+When the CogC scripts are available, use the deterministic compiler rather than manually rewriting large contexts.
+
+Installed package:
+
+```bash
+cogc compile --input <request.json> --profile <profile> --format text --receipt
+cogc validate --input <request.json> --profile <profile>
 ```
 
-A compressor outage is not a global blocker.
+Standalone skill directory:
 
-## Research and reuse
+```bash
+python scripts/compile_context.py --input <request.json> --profile <profile> --format text --receipt
+python scripts/validate_context.py --input <request.json> --profile <profile>
+```
 
-Before adding a new compression mechanism, inspect current prior art and prefer reuse. Start with `references/research-foundations.md`.
+Input and output schemas are in `schemas/`.
 
-The v0.2.0 engine deliberately implements only deterministic compilation and extractive reduction. Learned ACON-like policies, model-specific training, and dedicated compressor models belong in later releases only after the A/B/C harness shows measurable downstream value.
+## Fidelity Gate
 
-## Completion rule
+Before using a compressed package for consequential work, verify protected-field retention and source mapping.
 
-CogC has succeeded only when a constrained agent receives materially less working context while retaining required constraints and evidence and achieves equal or higher verified downstream quality, or when the same quality is achieved with meaningfully lower total cognitive cost.
+If the Fidelity Gate fails:
+
+1. retry with less aggressive compression;
+2. use extractive-only reduction;
+3. use deduplicated raw context;
+4. fall back to raw context.
+
+Never silently waive a failed fidelity check.
+
+## Output
+
+Return a Cognitive Package containing the information needed for the next action, including as applicable:
+
+- goal and task;
+- target profile;
+- protected constraints;
+- selected relevant facts and evidence;
+- procedure;
+- unresolved contradictions;
+- success and stop conditions;
+- expandable source handles;
+- source map;
+- fidelity result;
+- compression receipt.
+
+Do not claim success from compression ratio alone.
+
+## Evaluation
+
+When evaluating whether CogC helps an agent, compare the same target model on the same tasks:
+
+- A — raw/full context;
+- B — ordinary summarization or existing context handling;
+- C — CogC.
+
+Prefer downstream verified task success, retries, latency, total token use, escalation rate, and cost over text-similarity metrics.
+
+Read `references/research-foundations.md` only when evaluating, extending, or researching CogC. It is not required for routine compilation.
+
+## Boundaries
+
+CogC prepares context. It does not:
+
+- choose organizational or business goals;
+- authorize actions or override safety/security controls;
+- replace retrieval, routing, task decomposition, persistent memory, or execution governance;
+- require private chain-of-thought;
+- prove that a compressed package is semantically equivalent merely because protected fields were retained.
+
+When the full context is already small, precise, and appropriate for the target worker, do not use CogC.
