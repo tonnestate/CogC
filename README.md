@@ -1,34 +1,59 @@
 # CogC
 
+> [!WARNING]
+> **EXPERIMENTAL — v0.1.0**  
+> CogC is a research-oriented Agent Skill and reference implementation. The deterministic compiler, provenance tracking, reversible source handles, schemas, and fidelity checks are tested, but **downstream intelligence gains are not yet claimed**. Use it behind evaluation gates until your own raw-vs-summary-vs-CogC tests show a measurable benefit.
+
 **Capacity-Aware Cognitive Compression for constrained AI agents.**
 
-CogC compiles large, heterogeneous agent state into the minimum sufficient, provenance-preserving representation for a specific target worker. It is designed for environments where 4B–9B local models, variable external specialists and multi-agent handoffs must perform useful work without receiving every raw token the system knows.
+CogC compiles large, heterogeneous agent context into the **minimum sufficient, provenance-preserving working state for a specific target model**.
+
+It is built for a practical problem that appears as agent systems become larger while their individual workers remain constrained: the system may know far more than the worker can reliably use.
+
+A smaller model often does not need *more* context. It needs the **right context, in the right structure, with the right constraints preserved**.
 
 CogC is both:
 
-1. a valid GitHub Agent Skill under `.github/skills/cogc`; and
+1. a portable Agent Skill under `.github/skills/cogc`; and
 2. a dependency-free Python reference engine for deterministic cognitive compilation.
 
-Version `0.1.0` is deliberately conservative. It does **not** ship a new learned compressor. It establishes the measurable contract first: CIR, protected criticality classes, deduplication, extractive reduction, provenance, reversible source handles, target profiles and a Fidelity Gate.
+## Why CogC exists
 
-## The problem
+Modern agent systems accumulate context from conversations, RAG, tools, logs, repositories, memory, previous runs, policies, evidence, and agent-to-agent handoffs. Passing all of that material directly to every worker creates several problems:
 
-A small model often fails for two very different reasons:
+- **Context overload:** relevant facts compete with noise, repetition, obsolete state, and verbose history.
+- **Small-model mismatch:** 4B–9B workers may have enough capability for a bounded task but fail when forced to reconstruct the task from a large raw context.
+- **Expensive handoffs:** agents repeatedly transmit long histories even when the next worker needs only a few facts, constraints, and a known procedure.
+- **Lossy summarization:** ordinary summaries can remove exact values, identifiers, stop conditions, evidence links, or other information that must survive unchanged.
+- **Weak auditability:** after a summary, it can be difficult to determine which source supported a compressed claim.
+- **Repeated rediscovery:** a worker may be given an entire historical trajectory even when a verified reusable procedure already captures what matters.
+- **Unnecessary escalation:** systems may call larger or more expensive models simply because the context was poorly prepared for the cheaper worker.
 
-- it lacks capability; or
-- the system gave it the wrong cognitive representation.
+CogC was created to test a different approach:
 
-CogC targets the second problem.
+> **Do not ask a constrained model to understand everything the system knows. Compile what it needs to make the next correct decision.**
 
-Instead of:
+The goal is not to make a small model pretend to be a frontier model. The goal is to remove avoidable cognitive load so that each worker operates closer to its actual capability.
+
+## What CogC brings
+
+CogC turns this:
 
 ```text
-30,000 raw tokens
-→ "please understand all of this"
-→ constrained worker
+raw conversation
++ RAG chunks
++ tool output
++ logs
++ memory
++ evidence
++ constraints
++ prior trajectories
+                 │
+                 ▼
+          one huge prompt
 ```
 
-CogC aims for:
+into this:
 
 ```text
 Task + evidence + constraints + memory + procedures + target profile
@@ -36,12 +61,81 @@ Task + evidence + constraints + memory + procedures + target profile
                               ▼
                              CogC
                               │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+ criticality            relevance +           procedural
+ protection             deduplication          compilation
+        │                     │                     │
+        └─────────────────────┼─────────────────────┘
                               ▼
-Goal + critical state + relevant facts + procedure + source handles
+                 provenance + fidelity gate
                               │
                               ▼
-                       constrained worker
+        minimum sufficient cognitive package
+                              │
+                              ▼
+                       target worker
 ```
+
+The v0.1.0 compiler provides:
+
+- **Capacity-aware output:** compile for the intended worker rather than producing one universal summary.
+- **C0–C5 criticality classes:** protect hard constraints and high-value information from aggressive reduction.
+- **Exact-value protection:** preserve critical numbers, IDs, and machine-like identifiers.
+- **Deterministic deduplication:** remove repeated source content before using lossy methods.
+- **Task-focused selection:** prioritize information that is relevant to the current goal and next action.
+- **Procedural compression:** prefer a verified workflow/subtask/function procedure over replaying entire historical trajectories.
+- **Provenance:** retain source lineage for compiled facts.
+- **Reversible source handles:** omit non-critical detail from working context without making the original source unreachable.
+- **Cognitive Packets:** produce compact state suitable for agent handoffs.
+- **Fidelity Gate:** verify protected information before a compressed package is used.
+- **Compression receipts:** record what happened, which policy was used, and what was retained.
+- **A/B/C evaluation support:** compare raw context, ordinary summary, and CogC instead of assuming compression is beneficial.
+
+## Why use CogC
+
+CogC is useful when **the bottleneck is not retrieval but usable cognitive bandwidth**.
+
+Typical cases include:
+
+### Small local models
+
+A 4B or 9B worker may be perfectly capable of executing a narrow procedure while being unreliable when given 20,000 tokens of mixed history. CogC can transform that history into an explicit goal, current state, constraints, relevant facts, procedure, source handles, and stop conditions.
+
+### Tool-heavy agents
+
+Logs, repository scans, search results, API responses, test output, and large JSON objects can dominate context. CogC reduces repeated and irrelevant material while preserving critical exact values and source references.
+
+### Multi-agent handoffs
+
+The next agent rarely needs the complete conversation of the previous agent. CogC can emit a compact Cognitive Packet with claims, evidence references, unresolved conflicts, procedures, and the next required action.
+
+### Reusing expensive reasoning
+
+If a difficult task has already been solved and verified, future workers should not have to rediscover the method from raw history. CogC can represent reusable experience as workflow, subtask, or function-level procedural memory.
+
+### Reducing unnecessary use of larger models
+
+A stronger model may be needed because the problem is genuinely difficult — or because a weaker model received a poor representation of the problem. CogC is designed to help distinguish those cases experimentally.
+
+### Evidence-sensitive automation
+
+When constraints, IDs, numerical values, evidence references, and stop conditions cannot be silently lost, a generic summary is insufficient. CogC treats protected information and provenance as part of the compilation contract.
+
+## What CogC does **not** claim
+
+CogC v0.1.0 does **not** claim that:
+
+- compression always improves model quality;
+- fewer tokens automatically mean better reasoning;
+- a 4B model becomes equivalent to a frontier model;
+- its current deterministic policies are optimal;
+- published compression or memory research proves this combined architecture.
+
+Those are empirical questions.
+
+CogC is deliberately built so they can be tested.
 
 ## What CogC is not
 
@@ -49,13 +143,62 @@ CogC is not:
 
 - a replacement for RAG or retrieval;
 - a persistent-memory database;
-- a router;
-- a Governor or authorization layer;
+- a model router;
+- an authorization or governance layer;
 - an agent framework;
 - a generic summarizer;
-- proof that a 4B model becomes a frontier model.
+- a private chain-of-thought extractor;
+- a reason to compress context that is already small and appropriate.
 
-It is a **capacity-aware compiler** between assembled system state and the worker that must act on it.
+It is a **capacity-aware compiler between assembled system state and the worker that must act on it**.
+
+## The core idea
+
+A conventional summarizer asks:
+
+> How can I make this text shorter?
+
+CogC asks:
+
+> What is the minimum faithful cognitive state this specific worker needs to make the correct next decision?
+
+For a constrained worker, the desired result is closer to:
+
+```text
+GOAL
+Verify capability X.
+
+CURRENT STATE
+Source inspection completed; runtime behavior unverified.
+
+HARD CONSTRAINTS
+Do not modify production.
+Do not accept README claims as runtime proof.
+
+RELEVANT FACTS
+Implementation entry point: module Y.
+Expected behavior: Z.
+
+PROCEDURE
+WF-VERIFY-03
+
+EVIDENCE
+EV-17, EV-22
+
+NEXT ACTION
+Run isolated runtime test.
+
+SUCCESS
+Observed behavior matches claim X.
+
+STOP / ESCALATE
+Conflicting runtime evidence or unavailable test environment.
+
+EXPANDABLE
+EV-17, EV-22, SRC-41
+```
+
+rather than another prose summary.
 
 ## Install
 
@@ -72,13 +215,13 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The skill itself lives at:
+The canonical skill lives at:
 
 ```text
 .github/skills/cogc/SKILL.md
 ```
 
-GitHub Copilot recognizes project Agent Skills from `.github/skills`. The skill follows the open Agent Skills `SKILL.md` format. For Claude/portable project installation, see `docs/installation.md`.
+The same skill can be copied into other project-level Agent Skills locations with `tools/install_skill.py`. See `docs/installation.md`.
 
 ## First compile
 
@@ -110,7 +253,7 @@ cogc validate --input examples/repository-analysis.json --profile qwen-4b
 
 CogC v0.1.0 enforces these design rules:
 
-- C0/C1 information is never dropped to satisfy a token budget.
+- C0/C1 information is never dropped merely to satisfy a token budget.
 - Exact critical numbers and machine-like identifiers must survive.
 - Omitted non-critical source material remains addressable by source handle.
 - Exact duplicate source content is stored once while provenance is merged.
@@ -127,10 +270,10 @@ CogC v0.1.0 enforces these design rules:
   "token_budget": 1200,
   "sources": [
     {
-      "id": "OWN-1",
-      "kind": "owner_instruction",
+      "id": "POLICY-1",
+      "kind": "constraint",
       "criticality": "C0",
-      "text": "Do not write to production without Owner approval."
+      "text": "Do not write to production without explicit approval."
     },
     {
       "id": "EVID-1",
@@ -164,7 +307,7 @@ See `examples/` and `.github/skills/cogc/schemas/compile-request.schema.json` fo
 └── README.md
 ```
 
-## Scientific / engineering basis
+## Scientific and engineering basis
 
 CogC is intentionally reuse-first. Its design is informed by:
 
@@ -180,7 +323,7 @@ The repository does **not** claim these papers prove CogC as a combined architec
 
 ## Evaluation contract
 
-Do not evaluate CogC by token reduction alone.
+Do not evaluate CogC by compression ratio alone.
 
 The required downstream comparison is:
 
@@ -190,7 +333,7 @@ The required downstream comparison is:
 | B | ordinary summary/current context handling |
 | C | CogC |
 
-Use the same target model, tasks and acceptance tests. Measure verified task success, critical-field retention, retries, latency, tokens, premium-model escalations and total cost.
+Use the same target model, tasks, and acceptance tests. Measure verified task success, critical-field retention, retries, latency, tokens, model escalations, and total cost.
 
 Run the offline deterministic smoke eval:
 
@@ -199,6 +342,21 @@ python evals/run_offline_eval.py
 ```
 
 The offline eval validates fidelity and compression mechanics only. It does not masquerade as a model-quality benchmark.
+
+## Current status
+
+**v0.1.0 — EXPERIMENTAL**
+
+The deterministic mechanics are implemented and tested. Promotion requires downstream evidence that CogC provides one of the following without reducing required quality:
+
+- lower context cost;
+- lower latency;
+- fewer retries;
+- fewer unnecessary escalations;
+- higher verified success for constrained workers;
+- or materially better verified output at comparable total cost.
+
+Until such evidence exists for a given environment, CogC should be treated as an experimental optimization layer with raw-context fallback.
 
 ## Roadmap
 
@@ -233,12 +391,36 @@ Only with real labeled outcomes:
 - contextual-bandit policy selection;
 - teacher-to-small-worker procedural distillation.
 
-## Status
+## GitHub repository metadata
 
-`EXPERIMENTAL`
+**Description**
 
-Promotion condition: constrained agents must achieve equal or better verified downstream quality with lower cognitive cost, or materially higher verified quality at equivalent total cost.
+> Experimental capacity-aware cognitive compression for AI agents — compile large context, evidence, constraints, and procedures into small-model-ready packages with provenance and fidelity checks.
+
+**Topics / keywords**
+
+```text
+agent-skills
+ai-agents
+cognitive-compression
+context-compression
+context-engineering
+context-management
+small-language-models
+slm
+llm-agents
+local-llm
+prompt-compression
+agent-memory
+procedural-memory
+agent-handoffs
+provenance
+fidelity
+multi-agent-systems
+qwen
+llmlingua
+```
 
 ## License
 
-Apache License 2.0. See `LICENSE`.
+Apache-2.0. See `LICENSE`.
