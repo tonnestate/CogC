@@ -29,6 +29,12 @@ def _build_cir(request: CompileRequest) -> list[CIRUnit]:
         key = text.casefold()
         if key in seen:
             existing = seen[key]
+            # Identical text can enter through sources with different criticality.
+            # A later C0/C1 constraint must never inherit an earlier C4/C5 label.
+            # Preserve the strongest source priority before any budget selection.
+            priority = classify(item)
+            if priority < existing.criticality:
+                existing.criticality = priority
             if item.id not in existing.source_refs:
                 existing.source_refs.append(item.id)
             existing.metadata.setdefault("deduplicated_sources", []).append(item.id)
