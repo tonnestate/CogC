@@ -16,5 +16,7 @@ jobs:
           python-version: "3.11"
       - name: Install package and test dependencies
         run: python -m pip install -e ".[dev]"
-      - name: Verify shared policy integration and criticality
-        run: python -m pytest -q tests/test_compile.py tests/test_fidelity.py tests/test_dedup_priority.py
+      - name: Verify skill mirror and embedded engine are in sync
+        run: python tools/sync_skill.py --check
+      - name: Run full test suite (includes criticality and layout gates)
+        run: python -m pytest -q
